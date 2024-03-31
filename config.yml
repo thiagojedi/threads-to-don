@@ -1,0 +1,8 @@
+mastodon:
+  server: # example: your.instance
+  apiToken: # get from https://your.instance/settings/applications
+
+threads:
+  # List of threads accounts you want to check
+  accounts:
+    - zuck
