@@ -11,5 +11,5 @@ How to run:
 2. Run the following command:
 
 ```shell
-deno run --allow-read=config.yml --allow-net main.ts
+deno run --allow-read=config.yml --allow-net=threads.net,[your.instance] main.ts
 ```
