@@ -1,4 +1,6 @@
 import { parse } from "https://deno.land/std@0.207.0/yaml/mod.ts";
+import { checkAccounts } from "./threads.ts";
+import { getMastodonClient } from "./mastodon.ts";
 
 type Config = {
   mastodon: {
@@ -16,55 +18,21 @@ const input = await Deno.readTextFile(filename);
 
 const config = parse(input) as Config;
 
-for (const account of config.threads.accounts) {
-  console.groupEnd();
+const federated = await checkAccounts(config.threads.accounts);
 
-  const acc = account + "@threads.net";
+const { server, apiToken } = config.mastodon;
 
-  console.group(acc);
+const { search, follow } = getMastodonClient(server, apiToken);
 
-  const response = await fetch(
-    "https://threads.net/.well-known/webfinger?resource=acct:" + acc,
-    {
-      headers: {
-        Accept: "application/activity+json",
-      },
-    },
-  );
+const success = [] as string[];
 
-  if (!response.ok) {
-    console.log(`Federation: OFF (${response.status})`);
-    continue;
+for (const acc of federated) {
+  const accountToFollow = await search(acc);
+
+  if (!accountToFollow) {
+    console.log("Instance", server, "does not federate with Threads.net");
+    break;
   }
-
-  console.log("Federation: OK");
-
-  const { server, apiToken } = config.mastodon;
-
-  const fetchOptions = {
-    headers: {
-      "Authorization": `Bearer ${apiToken}`,
-      "Accept": "application/json",
-    },
-  };
-
-  console.log("Searching on " + server);
-
-  const searchResponse = await fetch(
-    `https://${server}/api/v1/accounts/search?q=${acc}&resolve=true`,
-    fetchOptions,
-  );
-
-  if (!searchResponse.ok) {
-    console.log("Not Found");
-    continue;
-  }
-
-  const parsedResponse = await searchResponse.json() as Array<
-    { id: string; display_name: string }
-  >;
-
-  const accountToFollow = parsedResponse[0];
 
   console.log(
     "Found",
@@ -73,19 +41,15 @@ for (const account of config.threads.accounts) {
     accountToFollow.id,
   );
 
-  const followResponse = await fetch(
-    `https://${server}/api/v1/accounts/${accountToFollow.id}/follow`,
-    {
-      ...fetchOptions,
-      method: "POST",
-    },
-  );
-
+  const followResponse = await follow(accountToFollow.id);
   if (followResponse.ok) {
     console.log("Following Account: OK");
+    success.push(acc);
   } else {
     console.log("Error following account (" + followResponse.status + ")");
   }
 }
 
-console.groupEnd();
+console.log(
+  `Result: following ${success.length} of ${config.threads.accounts.length}`,
+);
