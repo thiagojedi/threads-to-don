@@ -37,7 +37,7 @@ for (const acc of federated) {
   console.log(
     "Found",
     accountToFollow.display_name,
-    `@(${acc})`,
+    `(@${acc})`,
     "with local id",
     accountToFollow.id,
   );
