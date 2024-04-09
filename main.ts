@@ -24,7 +24,7 @@ const { server, apiToken } = config.mastodon;
 
 const { search, follow } = getMastodonClient(server, apiToken);
 
-const success = [] as string[];
+let success = 0;
 
 for (const acc of federated) {
   const accountToFollow = await search(acc);
@@ -37,6 +37,7 @@ for (const acc of federated) {
   console.log(
     "Found",
     accountToFollow.display_name,
+    `@(${acc})`,
     "with local id",
     accountToFollow.id,
   );
@@ -44,12 +45,12 @@ for (const acc of federated) {
   const followResponse = await follow(accountToFollow.id);
   if (followResponse.ok) {
     console.log("Following Account: OK");
-    success.push(acc);
+    success += 1;
   } else {
     console.log("Error following account (" + followResponse.status + ")");
   }
 }
 
 console.log(
-  `Result: following ${success.length} of ${config.threads.accounts.length}`,
+  `Result: following ${success} of ${config.threads.accounts.length}`,
 );

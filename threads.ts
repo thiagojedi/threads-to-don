@@ -16,7 +16,7 @@ export const checkAccounts = async (accounts: Array<string>) => {
     if (response.ok) {
       federatedAccounts.push(acc);
     } else {
-        console.warn(`${account} is not federating`);
+      console.warn(`${account} is not federating`);
     }
   }
 
