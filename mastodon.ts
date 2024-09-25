@@ -1,4 +1,6 @@
 export const getMastodonClient = (server: string, token: string) => {
+  const baseUrl = server.startsWith("https://") ? server : `https://${server}`;
+
   const fetchOptions = {
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -7,11 +9,11 @@ export const getMastodonClient = (server: string, token: string) => {
   };
 
   const search = async (acc: string) => {
-    const response = await fetch(
-      `https://${server}/api/v1/accounts/search?q=${acc}&resolve=true`,
-      fetchOptions,
-    );
-    
+    const url = new URL("/api/v1/accounts/search?resolve=true", baseUrl);
+    url.searchParams.append("q", acc);
+
+    const response = await fetch(url, fetchOptions);
+
     if (!response.ok) {
       console.log("Instance", server, "does not federate with threads");
       return null;
@@ -26,7 +28,7 @@ export const getMastodonClient = (server: string, token: string) => {
 
   const follow = (id: string) =>
     fetch(
-      `https://${server}/api/v1/accounts/${id}/follow`,
+      new URL(`/api/v1/accounts/${id}/follow`, baseUrl),
       {
         ...fetchOptions,
         method: "POST",
