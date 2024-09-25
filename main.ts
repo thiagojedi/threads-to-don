@@ -34,10 +34,13 @@ for (const acc of federated) {
     break;
   }
 
+  console.group(acc);
+
+  console.log("Federation: OK");
+
   console.log(
     "Found",
     accountToFollow.display_name,
-    `(@${acc})`,
     "with local id",
     accountToFollow.id,
   );
@@ -49,6 +52,7 @@ for (const acc of federated) {
   } else {
     console.log("Error following account (" + followResponse.status + ")");
   }
+  console.groupEnd();
 }
 
 console.log(
