@@ -35,5 +35,5 @@ a list of accounts you want to "monitor".
 ## Motivation
 
 This project was motivated by a toot from
-[Cassidy James](https://mastodon.com.br/@cassidy@blaede.family/112192146238323309)
+[Cassidy James](https://mastodon.blaede.family/@cassidy/112192144231285118)
 asking for a migration tool for Threads to Mastodon.
