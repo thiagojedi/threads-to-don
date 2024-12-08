@@ -1,17 +1,22 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
-	"name": "threads-to-don",
+  "name": "threads-to-don",
 
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
 
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"justjavac.vscode-deno-extensionpack"
-			]
-		}
-	}
+  "runArgs": [
+    "--userns=keep-id",
+    "--security-opt=label=disable"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "justjavac.vscode-deno-extensionpack"
+      ]
+    }
+  }
 }
